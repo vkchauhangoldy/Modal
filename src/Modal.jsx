@@ -9,12 +9,20 @@ const Modal = () => {
         phone: "",
         dob: "",
     });
+
     const modalRef = useRef(null);
 
     const openmodal = () => setismodalopen(true);
+
     const closemodal = () => {
         setismodalopen(false);
         setformdata({ username: "", email: "", phone: "", dob: "" });
+    };
+
+    const handleOutsideClick = (e) => {
+        if (modalRef.current && !modalRef.current.contains(e.target)) {
+            closemodal();
+        }
     };
 
     const handleInputChange = (e) => {
@@ -25,9 +33,9 @@ const Modal = () => {
     const validationform = () => {
         const { username, email, phone, dob } = formdata;
         if (!username || !email || !phone || !dob) return "All fields are required.";
-        if (!email.includes("@")) return "Invalid email. Please check your email address.";
-        if (!/^\d{10}$/.test(phone)) return "Invalid phone number. Please enter a 10-digit phone number.";
-        if (new Date(dob) > new Date()) return "Invalid date of birth. Date of birth cannot be in the future.";
+        if (!email.includes("@")) return "Invalid email.";
+        if (!/^\d{10}$/.test(phone)) return "Phone must be 10 digits.";
+        if (new Date(dob) > new Date()) return "DOB cannot be in the future.";
         return "";
     };
 
@@ -39,12 +47,6 @@ const Modal = () => {
             return;
         }
         closemodal();
-    };
-
-    const handleOutsideClick = (e) => {
-        if (modalRef.current && !modalRef.current.contains(e.target)) {
-            closemodal();
-        }
     };
 
     return (
