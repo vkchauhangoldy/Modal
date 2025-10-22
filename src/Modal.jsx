@@ -19,6 +19,7 @@ const Modal = () => {
         setformdata({ username: "", email: "", phone: "", dob: "" });
     };
 
+    // Detect outside click
     const handleOutsideClick = (e) => {
         if (modalRef.current && !modalRef.current.contains(e.target)) {
             closemodal();
@@ -32,21 +33,34 @@ const Modal = () => {
 
     const validationform = () => {
         const { username, email, phone, dob } = formdata;
-        if (!username || !email || !phone || !dob) return "All fields are required.";
-        if (!email.includes("@")) return "Invalid email.";
-        if (!/^\d{10}$/.test(phone)) return "Phone must be 10 digits.";
-        if (new Date(dob) > new Date()) return "DOB cannot be in the future.";
-        return "";
+
+        if (!username || !email || !phone || !dob) {
+            return "All fields are required.";
+        }
+
+        if (!email.includes("@")) {
+            alert("Invalid email. Please check your email address.");
+            return false;
+        }
+
+        if (!/^\d{10}$/.test(phone)) {
+            alert("Invalid phone number. Please enter a 10-digit phone number.");
+            return false;
+        }
+
+        if (new Date(dob) > new Date()) {
+            alert("Invalid date of birth. Date of birth cannot be in the future.");
+            return false;
+        }
+
+        return true;
     };
 
     const handlesubmit = (e) => {
         e.preventDefault();
-        const validationerror = validationform();
-        if (validationerror) {
-            alert(validationerror);
-            return;
+        if (validationform()) {
+            closemodal();
         }
-        closemodal();
     };
 
     return (
@@ -64,41 +78,41 @@ const Modal = () => {
                             <div>
                                 <label>Username:</label>
                                 <input
-                                    required
                                     type="text"
                                     id="username"
                                     value={formdata.username}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                             <div>
                                 <label>Email:</label>
                                 <input
-                                    required
                                     type="email"
                                     id="email"
                                     value={formdata.email}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                             <div>
                                 <label>Phone:</label>
                                 <input
-                                    required
                                     type="text"
                                     id="phone"
                                     value={formdata.phone}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                             <div>
                                 <label>Date of Birth:</label>
                                 <input
-                                    required
                                     type="date"
                                     id="dob"
                                     value={formdata.dob}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                             <button className="submit-button" type="submit">
