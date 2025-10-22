@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./Modal.css";
 
 const Modal = () => {
@@ -9,43 +9,28 @@ const Modal = () => {
         phone: "",
         dob: "",
     });
-    const openmodal = () => {
-        setismodalopen(true);
-    };
+    const modalRef = useRef(null);
+
+    const openmodal = () => setismodalopen(true);
     const closemodal = () => {
         setismodalopen(false);
-        setformdata({
-            username: "",
-            email: "",
-            phone: "",
-            dob: "",
-        });
+        setformdata({ username: "", email: "", phone: "", dob: "" });
     };
+
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         setformdata({ ...formdata, [id]: value });
     };
+
     const validationform = () => {
         const { username, email, phone, dob } = formdata;
-
-        // Check if all fields are filled
-        if (!username || !email || !phone || !dob) {
-            return "All fields are required.";
-        }
-
-        if (!email.includes("@")) {
-            return "Invalid email. Please check your email address.";
-        }
-
-        //validate phone
-        if (!/^\d{10}$/.test(phone)) {
-            return "Invalid phone number. Please enter a 10-digit phone number.";
-        }
-        if (new Date(dob) > new Date()) {
-            return "Invalid date of birth. Date of birth cannot be in the future.";
-        }
+        if (!username || !email || !phone || !dob) return "All fields are required.";
+        if (!email.includes("@")) return "Invalid email. Please check your email address.";
+        if (!/^\d{10}$/.test(phone)) return "Invalid phone number. Please enter a 10-digit phone number.";
+        if (new Date(dob) > new Date()) return "Invalid date of birth. Date of birth cannot be in the future.";
         return "";
     };
+
     const handlesubmit = (e) => {
         e.preventDefault();
         const validationerror = validationform();
@@ -55,6 +40,13 @@ const Modal = () => {
         }
         closemodal();
     };
+
+    const handleOutsideClick = (e) => {
+        if (modalRef.current && !modalRef.current.contains(e.target)) {
+            closemodal();
+        }
+    };
+
     return (
         <div className="app">
             <h1>User Details Modal</h1>
@@ -63,12 +55,12 @@ const Modal = () => {
             </button>
 
             {ismodalopen && (
-                <div className="modal" onClick={closemodal}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <form action="" onSubmit={handlesubmit}>
+                <div className="modal" onClick={handleOutsideClick}>
+                    <div className="modal-content" ref={modalRef}>
+                        <form onSubmit={handlesubmit}>
                             <h2>Fill Detail</h2>
                             <div>
-                                <label htmlFor="">Username:</label>
+                                <label>Username:</label>
                                 <input
                                     required
                                     type="text"
@@ -78,7 +70,7 @@ const Modal = () => {
                                 />
                             </div>
                             <div>
-                                <label htmlFor="">Email:</label>
+                                <label>Email:</label>
                                 <input
                                     required
                                     type="email"
@@ -88,7 +80,7 @@ const Modal = () => {
                                 />
                             </div>
                             <div>
-                                <label htmlFor="">Phone:</label>
+                                <label>Phone:</label>
                                 <input
                                     required
                                     type="text"
@@ -98,7 +90,7 @@ const Modal = () => {
                                 />
                             </div>
                             <div>
-                                <label htmlFor="">Date of Birth:</label>
+                                <label>Date of Birth:</label>
                                 <input
                                     required
                                     type="date"
